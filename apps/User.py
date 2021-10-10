@@ -53,10 +53,12 @@ def signin(user):
 		conn = DB_CONN.get_conn()
 		cursor = conn.cursor()
 		# print(encrypt_pwd(user.password))
-		cursor.execute("select client_id as id, token as token from users where (contact_number = %s or email = %s) and password = %s and status = 1", (user.username,user.username, encrypt_pwd(user.password) ) )
+		cursor.execute("select id, token as token from users where (contact_number = %s or email = %s) and password = %s and active = 1", (user.username,user.username, encrypt_pwd(user.password) ) )
+		print(cursor.statement)
 		_data = DB_CONN.get_dict(cursor)
+		print(_data)
 		if cursor.rowcount != 1:
-			logging.warn("None or Multiple rows received for {} and password".format(user.username))
+			logger.warn("None or Multiple rows received for {} and password".format(user.username))
 			return {
 				"msg":"Cannot login",
 				"status":401
@@ -104,7 +106,7 @@ def signup(user):
 
 		user_data = (user.name, encrypt_pwd(user.password), user.contact_number, user.address, user.dob, token, user.email)
 		# print(user_data)
-		query = "Insert into users (name, password, contact_number, address, dob, token, email) values(%s, %s, %s, %s, %s, %s, %s )"
+		query = "Insert into users (fname, password, contact_number, address1, dob, token, email, active) values(%s, %s, %s, %s, %s, %s, %s, 1 )"
 		# cursor.execute("select client_id as id, token as token from client where username = %s and password = %s and status = 1", (user.username, user.password))
 		cursor.execute(query, user_data)
 		conn.commit()
@@ -139,7 +141,7 @@ def about_me(user_id):
 	try:
 		conn = DB_CONN.get_conn()
 		cursor = conn.cursor()
-		cursor.execute("select username, name, contact_number, address, date_format(dob, '%Y-%m-%d') as dob, case  when status=1 then 'active' else 'inactive' end as status  from users where client_id = %s;", (int(user_id), ) )
+		cursor.execute("select fname as username, concat_ws(' ', fname, lname) as name, contact_number, address1, address2, date_format(dob, '%Y-%m-%d') as dob, case  when active=1 then 'active' else 'inactive' end as status  from users where id = %s;", (int(user_id), ) )
 		_data = DB_CONN.get_dict(cursor)
 		# print(_data)
 		if cursor.rowcount != 1:

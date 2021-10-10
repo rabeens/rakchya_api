@@ -58,7 +58,7 @@ class DB_CONN():
 					# reset_session=True
 				)
 				return mydb
-			except :
+			except Exception as e:
 				logger.error("Cannot connect to database. Attempt: {}".format(retry))
 			retry = retry + 1
 			time.sleep(_retry_wait_ts)

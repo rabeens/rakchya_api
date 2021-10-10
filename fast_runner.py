@@ -61,10 +61,12 @@ security = HTTPBasic()
 #     start_time = time.time()
 #     response = await call_next(request)
 #     process_time = time.time() - start_time
-#     response.headers["X-Process-Time"] = str(process_time)
-#     msg = {
+#     print(request.headers)
+#     print(dir(response))
+#     # response.headers["X-Process-Time"] = str(process_time)
+#     # msg = {
 
-#     }
+#     # }
 #     return response
 
 
@@ -78,10 +80,10 @@ def secure(f, request, *args, **kwargs):
     else:
         # pass
         # return f(14, *args, **kwargs)
-        return f(11, *args, **kwargs)
+        return f(1, *args, **kwargs)
         
     print("-------------------------------------------")
-    print(request.headers)
+    # print(request.headers)
     print(user)
     print("-------------------------------------------")
     if user == False:
@@ -375,6 +377,11 @@ async def _get_old_msgs(request: Request, case_id: int, offset:int = 0, limit:in
 async def _receive_msgs(request: Request, case_id: int, msg:str, ):
     return secure(receive_msgs, request, case_id, msg)
 
+@app.get("/chat_app_view", tags=["chat"])
+async def _chat_app_view(request: Request):
+    return secure(chat_app_view, request,)
+
+
 # ------------------------------------------------------------------------------------------
 #  okhati section
 # ------------------------------------------------------------------------------------------
@@ -454,4 +461,11 @@ async def _doc_active_cases(request: Request):
 
 
 if __name__ == "__main__":
-    uvicorn.run("fast_runner:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run(
+        "fast_runner:app", 
+        host="0.0.0.0", 
+        port=5000, 
+        reload=True,
+        # ssl_keyfile="certs/private.key",
+        # ssl_certfile="certs/certificate.crt",
+    )

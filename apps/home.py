@@ -11,7 +11,7 @@ def welcome_msg(user_id):
     try:
         conn = DB_CONN.get_conn()
         cursor = conn.cursor()
-        cursor.execute("select banner_json as msg from welcome_msg where user_id  in (0, %s) limit 2", (user_id, ))
+        cursor.execute("select banner_json as msg from banners where client_id  in (0, %s) and is_promo = true limit 2", (user_id, ))
         _tmp_data = DB_CONN.get_dict(cursor)
         # print(_data)
         _data = []
@@ -41,7 +41,7 @@ def banners(user_id):
     try:
         conn = DB_CONN.get_conn()
         cursor = conn.cursor()
-        cursor.execute("select banner_json as msg from banners where user_id  in (0, %s) limit 10", (user_id, ))
+        cursor.execute("select banner_json as msg from banners where client_id  in (0, %s) and is_advertisement = true limit 10", (user_id, ))
         _tmp_data = DB_CONN.get_dict(cursor)
         # print(_data)
         _data = []
@@ -73,7 +73,7 @@ def categories(user_id, _type = "category"):
     try:
         conn = DB_CONN.get_conn()
         cursor = conn.cursor()
-        cursor.execute("select id as id, name, label as title, icon, description from symptoms where type = %s limit 100", (_type,  ))
+        cursor.execute("select id as id, name, name as title, icon, description from symptoms where lower(type) = %s limit 100", (_type.lower(),  ))
         _data["msg"] = DB_CONN.get_dict(cursor)
         # _data = [{"id":1, "title":"Symptom 1", "icon" :"https://4.bp.blogspot.com/-krdeTqQLML8/Wyf2oV7eedI/AAAAAAAABpI/OZ759swV7L8wWtt2pwBXIgp6aPz33r01gCLcBGAs/s400/fist%2Bapp.jpg"},{"id":2, "title":"Symptom 2"}, {"id":3, "title":"Symptom 3"},{"id":4, "title":"Symptom 1"},{"id":5, "title":"Symptom 2"}, {"id":6, "title":"Symptom 3"}, {"id":7, "title":"Symptom 7"}]
     except Exception as e:
@@ -90,7 +90,7 @@ def categories(user_id, _type = "category"):
 
 
 def symptoms(user_id):
-    return categories(user_id, "symptom")
+    return categories(user_id, "symptoms")
 
 
 def doctors(user_id, category = '*', limit = 20, offset = 0):
@@ -101,11 +101,11 @@ def doctors(user_id, category = '*', limit = 20, offset = 0):
     try:
         _params = (offset, limit)
         # query = "select  from doctors as doc inner join doc_to_symptoms_mapping as dtsm on doc.doc_id = dtsm.doc_id inner join symptoms as s on dtsm.symptom_id = s.id "
-        query = "select distinct doc.doc_id as id, doc.name as Name, rating as rating, doc.icon, doc.description as description from doctors as doc inner join doc_to_symptoms_mapping as dtsm on doc.doc_id = dtsm.doc_id inner join symptoms as smpt on smpt.id = dtsm.symptom_id"
+        query = "select distinct doc.id as id, concat_ws(' ', u.fname, u.lname) as Name, rating as rating, doc.icon, doc.description as description from doctors as doc inner join doc_to_symptoms_mapping as dtsm on doc.id = dtsm.doc_id inner join symptoms as smpt on smpt.id = dtsm.symptom_id inner join users as u on u.id = doc.id"
         if category != "*":
-            where_query = "where lower(smpt.label) = %s or lower(smpt.name) = %s "
+            where_query = "where lower(smpt.name) = %s "
             query = "{} {}".format(query, where_query)
-            _params = (category.lower(),category.lower(),  offset, limit)
+            _params = (category.lower(),  offset, limit)
         query = "{} {}".format(query, "limit %s, %s")
 
         conn = DB_CONN.get_conn()

@@ -14,7 +14,7 @@ class Logger():
 		except:
 			_path = "logs/user.logs"
 		handler = RotatingFileHandler(_path, maxBytes=5000000, backupCount=10)
-		formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+		formatter = logging.Formatter('{"ts":"%(asctime)s", "name":"%(name)s", "level":"%(levelname)s", "path":"%(pathname)s", "file":"%(filename)s", "function":"%(funcName)s", "line":"%(lineno)d", "msg":"%(message)s"}')
 		handler.setFormatter(formatter)
 		try:
 			_level = logging.getLevelName(LOG_LEVEL)

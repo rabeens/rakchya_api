@@ -28,12 +28,12 @@ def get_user_by_session(session_header):
 	try:
 		
 		cursor = conn.cursor()
-		cursor.execute("select client_id from users where token = %s", (token,))
+		cursor.execute("select id from users where token = %s", (token,))
 		_tmp_data = DB_CONN.get_dict(cursor)
 		if len(_tmp_data) !=1:
 			logger.error("Multiple users found for token {}".format(token))
 			return False
-		user_id = _tmp_data[0]["client_id"]
+		user_id = _tmp_data[0]["id"]
 	except Exception as e:
 		logger.error(e)
 	finally:

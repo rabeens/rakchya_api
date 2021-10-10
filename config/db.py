@@ -1,7 +1,7 @@
 DB_CONFIG = {
-	"DB_NAME":"rakshya",
-	"DB_USER":"root",
-	"DB_PWD":"kathmandu090",
+	"DB_NAME":"rakchya",
+	"DB_USER":"dev",
+	"DB_PWD":"pass",
 	"DB_HOST":"localhost",
 	"DB_PORT":"3306"
 }

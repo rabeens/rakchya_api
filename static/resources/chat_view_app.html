@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> 
+	<script src="https://cdn.socket.io/4.2.0/socket.io.min.js" integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj" crossorigin="anonymous"></script>
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		#peerViewWrapper {
+			height:100vh;
+			width:100%;
+			background:cyan;
+			padding : 0;
+			margin: 0;
+
+		}
+		#selfViewWrapper{
+			border: 1px solid #aaa;
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 20%;
+			min-width: 160px;
+			max-width: 600px;
+			height: 20%;
+			min-height: 160px;
+			max-height: 600px;
+			background: blue;
+		}
+		#selfPlayer{
+			height: 100%
+			width: 100%;
+			overflow: hidden;
+		}
+	</style>
+
+</head>
+<body>
+	<div id="peerViewWrapper">
+	view
+	<button
+		onclick="handle()"
+	>press</button>
+	</div>
+	<div id="selfViewWrapper">
+		<video id="selfPlayer" controls autoplay></video>
+
+	</div>
+
+	<script type="text/javascript">
+
+		const socket = io("http://localhost:4000", {
+			transports: ['websocket']
+		});
+		console.log(socket.connected)
+		function handle(){
+			socket.emit("send_msg", "test")
+			console.log(socket)	
+		}
+
+		socket.on("receive_msg", res=>{
+			console.log(res)
+		})
+
+		
+
+
+		// let player = document.getElementById("selfPlayer")
+		// window.navigator.mediaDevices.getUserMedia({
+		// 	video:true,
+		// 	audio:true
+		// })
+		// .then((stream) => {
+		// 	player.srcObject = stream;
+		// });
+
+	</script>
+</body>
+</html>
